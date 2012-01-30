@@ -24,15 +24,16 @@ class get_pretty{
 	// written to help reduce HTML markup mainly...
 		if($_SERVER['REQUEST_URI'] != ''){
 			if($_SERVER['QUERY_STRING']){
-				$query = explode('/',$_SERVER['QUERY_STRING']);
+				$this->request = explode('/',$_SERVER['QUERY_STRING']);
+				// this is a wee bit of code to make the array_combine function work
+				// and to process query strings as the URLS they resemble in the order of the array that is passed to it
+				if( (int) count($this->request) != (int) count($get_fields) )
+						foreach($get_fields as $loc=>$value)
+							if(!array_key_exists($loc,$this->request ))
+								unset($get_fields[$loc]);
 				$this->script_name = $_SERVER['SCRIPT_NAME'];
-				if ($get_fields!=NULL && is_array($get_fields))
-					self::set_get( array_combine($get_fields,$query)) ;
-				$this->request = $query;
-			}else{
-				$query = explode('?',$_SERVER['REQUEST_URI'],2);
-				$this->script_name = $query[0];
-				$this->request = explode('/',$query[1]);
+				$this->request = array_combine($get_fields,$this->request);
+				$get_fields!=NULL && is_array($get_fields) AND self::set_get( $this->request) ;
 			}
 		}
 	}
